@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import {
-    TextField, Button, Popover, Typography, Chip, Paper, Table, TableBody, TableCell, TableHead, TableRow, Select, MenuItem
+    TextField, Button, Popover, Typography, Chip, Paper, Table, TableBody, TableCell, TableHead, TableRow, Select, MenuItem, Link
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -106,6 +106,7 @@ export function PaperDetail({
                 <Typography variant="h4" component="div">{onChainId ? `Paper#${onChainId}` : 'New Paper'}</Typography>
                 <form onSubmit={onSubmit}>
                     <Section>
+                        {typeof onChainId === 'number' && <Link href={`/paper/${onChainId}`} target="_blank">Link</Link>}
                         <Typography variant="h6" component="div">Metadata</Typography>
                         <FieldsWrapper>
                             <StyledTextField

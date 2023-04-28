@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import {
-    TextField, Button, Typography, Paper, Popover, Select, MenuItem
+    TextField, Button, Typography, Paper, Popover, Select, MenuItem, LinearProgress
 } from '@mui/material';
 
 import { DS_API_URL } from '../config';
@@ -41,20 +41,23 @@ const ActionsWrapper = styled.div`
 `;
 
 export function RawDataDetail({
-    user, createdBy, onChainId, dataType, setDataType, description, setDescription, setSelectedFile, onSubmit
+    user, createdBy, onChainId, dataType, setDataType, description, setDescription, setSelectedFile, onSubmit, isSaving, setIsSaving
 }) {
     const [accessPopoverAnchorEl, setAccessPopoverAnchorEl] = useState(null);
     const [approveAccessFor, setApproveAccessFor] = useState('');
 
     const approveAccess = useCallback(() => {
+        if (setIsSaving) {
+            setIsSaving(true);
+        }
         axios.post(`${DS_API_URL}/data/${onChainId}/approve/${approveAccessFor}`, {
             wallet_address: user.walletAddress
-        }).then(() => { setAccessPopoverAnchorEl(); });
-    }, [onChainId, approveAccessFor]);
+        }).then(() => { if (setIsSaving) { setIsSaving(false); } setAccessPopoverAnchorEl(); });
+    }, [onChainId, approveAccessFor, setIsSaving]);
 
     return (
         <DetailWrapper>
-            <StyledPaper>
+            <StyledPaper style={{ pointerEvents: isSaving ? 'none' : 'all' }}>
                 <Typography variant="h4" component="div">{onChainId ? `RawData#${onChainId}` : 'New Raw Data'}</Typography>
                 <form onSubmit={onSubmit}>
                     <Section>
@@ -116,6 +119,7 @@ export function RawDataDetail({
                         )}
                     </ActionsWrapper>
                 </form>
+                {isSaving && <LinearProgress />}
             </StyledPaper>
         </DetailWrapper>
     );
@@ -127,6 +131,7 @@ export function RawDataNew({
     const [dataType, setDataType] = useState();
     const [description, setDescription] = useState('');
     const [selectedFile, setSelectedFile] = useState();
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
@@ -147,6 +152,7 @@ export function RawDataNew({
             onCreate();
         }
 
+        setIsSaving(true);
         axios.post(`${DS_API_URL}/data`, formData, {
             headers: {
                 'Accept': 'application/json',
@@ -154,11 +160,12 @@ export function RawDataNew({
             }
         }).then((response) => {
             onCreated(response.data);
+            setIsSaving(false);
         });
-    }, [selectedFile, description, walletAddress, onCreate, onCreated]);
+    }, [selectedFile, description, walletAddress, onCreate, onCreated, setIsSaving]);
 
     const propsThru = {
-        dataType, setDataType, description, setDescription, setSelectedFile, onSubmit: handleSubmit
+        dataType, setDataType, description, setDescription, setSelectedFile, onSubmit: handleSubmit, isSaving, setIsSaving
     };
 
     return (

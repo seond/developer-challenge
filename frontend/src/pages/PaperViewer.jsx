@@ -349,7 +349,7 @@ function PaperViewerInner() {
 export function PaperViewer() {
     return (
         <Centered>
-            <WhoAreYou>
+            <WhoAreYou site="ds">
                 <PaperViewerInner />
             </WhoAreYou>
         </Centered>

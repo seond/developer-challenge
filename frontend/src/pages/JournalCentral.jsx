@@ -184,7 +184,7 @@ export function JournalCentralInner() {
 export function JournalCentral() {
     return (
         <Centered>
-            <WhoAreYou>
+            <WhoAreYou site="conf">
                 <ReduxProvider store={dataStore}>
                     <JournalCentralInner />
                 </ReduxProvider>

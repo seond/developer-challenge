@@ -212,7 +212,7 @@ export function DataStudio() {
     return (
         <DarkTheme>
             <Centered>
-                <WhoAreYou>
+                <WhoAreYou site="ds">
                     <ReduxProvider store={dataStore}>
                         <DataStudioInner />
                     </ReduxProvider>
